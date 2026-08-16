@@ -1,0 +1,525 @@
+\documentclass[11pt,a4paper]{article}
+
+%Inserindo pacotes básicos%
+
+\usepackage[utf8]{inputenc} 
+\usepackage[T1]{fontenc} 
+\usepackage[brazil]{babel} 
+\usepackage{mathptmx} 
+\usepackage{geometry} 
+\usepackage{setspace} 
+\usepackage{indentfirst}
+\usepackage{graphicx} 
+\usepackage{float} 
+\usepackage{amsmath} 
+\usepackage{siunitx} 
+\usepackage{booktabs}
+\usepackage{array} 
+\usepackage{caption} 
+\usepackage{fancyhdr}
+\setlength{\headheight}{13.6pt}
+\usepackage{ragged2e} 
+\usepackage{url} 
+\usepackage{hyperref}
+
+%Configurações gerais%
+
+\geometry{ 
+    a4paper, 
+    top=3cm, 
+    bottom=2cm, 
+    left=3cm, 
+    right=2cm 
+} 
+\onehalfspacing 
+\justifying 
+\setlength{\parindent}{1.25cm} 
+\setlength{\parskip}{0pt} 
+\sisetup{ output-decimal-marker = {,}, per-mode = symbol 
+}
+
+%Cabeçalho e rodapé%
+
+\pagestyle{fancy} 
+\fancyhf{} 
+\fancyhead[L]{Verificação da Relutância de Circuito Magnético} 
+\fancyhead[R]{CEME I} 
+\fancyfoot[C]{\thepage} 
+\renewcommand{\headrulewidth}{0.4pt}
+
+%Comando auxiliar para figuras%
+
+\newcommand{\figuraopcional}[4]{ 
+    \IfFileExists{#1}{ 
+        \begin{figure}[H] 
+            \centering 
+            \includegraphics[width=#2\textwidth]{#1} 
+            \caption{#3} 
+            \label{#4} 
+        \end{figure} 
+    }{ 
+        \begin{figure}[H] 
+            \centering 
+            \fbox{ 
+                \begin{minipage}[c][4cm][c]{0.85\textwidth} 
+                \centering 
+                Figura não carregada no Overleaf.\\ 
+                Arquivo esperado: \texttt{#1} 
+            \end{minipage} 
+        } 
+        \caption{#3} 
+        \label{#4} 
+    \end{figure} 
+}
+}
+%Dados do relatorio%
+\title{ 
+    \textbf{Verificação da Relutância de Circuito Magnético}\\ 
+    \large Universidade do Estado do Rio de Janeiro\\ 
+    \large Conversão Eletromecânica de Energia I 
+} 
+    
+\author{ 
+    Turma 2\\ 
+    João, Elton e Emanuel 
+} 
+\date{14 de agosto de 2026} 
+\begin{document}
+
+\maketitle 
+\thispagestyle{fancy}
+
+\begin{abstract} Este relatório apresenta o estudo experimental da relutância em circuitos magnéticos utilizando núcleos ferromagnéticos nas configurações U+I e E+I. Inicialmente foram realizadas medições com o núcleo U+I aberto e fechado, observando-se a influência do fechamento do caminho magnético sobre a corrente de magnetização e sobre a tensão induzida em uma bobina de teste.
+
+Em seguida, foi analisada a distribuição do fluxo magnético em um núcleo E+I, considerando a bobina de alimentação posicionada em um ramo lateral e posteriormente no ramo central. Os fluxos magnéticos foram calculados indiretamente por meio da tensão induzida na bobina de teste, utilizando a lei de Faraday.
+
+Também foi realizada uma simulação no software FEMM, com material magnético linear de permeabilidade relativa igual a 1000, a fim de comparar qualitativamente a distribuição de fluxo obtida experimentalmente com a distribuição simulada. Os resultados mostraram que o fechamento do circuito magnético reduz significativamente a relutância e aumenta o fluxo produzido, enquanto o núcleo E+I apresentou divisão de fluxo coerente com a lei dos nós aplicada a circuitos magnéticos. \end{abstract}
+
+\section{Introdução} Circuitos magnéticos são estruturas formadas por materiais de elevada permeabilidade magnética, geralmente utilizadas para conduzir e concentrar fluxo magnético em máquinas elétricas, transformadores, atuadores e outros dispositivos eletromecânicos. De forma análoga aos circuitos elétricos, nos quais a corrente é estabelecida pela aplicação de uma força eletromotriz sobre uma determinada resistência, em circuitos magnéticos o fluxo magnético é produzido por uma força magnetomotriz aplicada sobre uma determinada relutância.
+
+A força magnetomotriz é dada por 
+\begin{equation} 
+    \mathcal{F} = N I , 
+    \label{eq:fmm} 
+\end{equation}
+
+em que \(N\) representa o número de espiras da bobina e \(I\) representa a corrente que circula por ela. A relutância magnética, por sua vez, pode ser entendida como a oposição oferecida pelo circuito à passagem do fluxo magnético. Para um caminho magnético uniforme, a relutância pode ser expressa por
+
+\begin{equation} 
+    \mathcal{R} = \frac{l}{\mu A}, 
+    \label{eq:relutancia} 
+\end{equation}
+
+em que \(l\) é o comprimento médio do caminho magnético, \(A\) é a área da seção transversal e \(\mu\) é a permeabilidade magnética do material. A permeabilidade absoluta pode ser escrita como
+
+\begin{equation} 
+    \mu = \mu_0 \mu_r , 
+    \label{eq:permeabilidade} 
+\end{equation}
+
+sendo \(\mu_0\) a permeabilidade magnética do vácuo e \(\mu_r\) a permeabilidade relativa do material.
+
+A relação entre força magnetomotriz, relutância e fluxo magnético é apresentada por
+
+\begin{equation} 
+    \Phi = \frac{\mathcal{F}}{\mathcal{R}} = \frac{N I}{\mathcal{R}}, \label{eq:fluxo_relutancia} 
+\end{equation}
+
+onde \(\Phi\) é o fluxo magnético no circuito. Essa relação mostra que, para uma mesma força magnetomotriz, a redução da relutância resulta em maior fluxo magnético. Por esse motivo, a presença de entreferros ou descontinuidades no caminho magnético aumenta consideravelmente a relutância do circuito e reduz o fluxo produzido.
+
+Como a medição direta do fluxo magnético em um núcleo ferromagnético é difícil, o experimento utiliza uma bobina de teste para realizar uma medição indireta. De acordo com a lei de Faraday, a tensão induzida em uma bobina é proporcional à taxa de variação do fluxo magnético concatenado com suas espiras. Para uma tensão senoidal, o valor eficaz do fluxo magnético pode ser calculado por
+
+\begin{equation} 
+    \Phi_{\text{rms}} = \frac{V_{\text{rms}}}{N \omega}, 
+    \label{eq:fluxo_farad} 
+\end{equation}
+
+em que \(V_{\text{rms}}\) é a tensão eficaz induzida na bobina de teste, \(N\) é o número de espiras e \(\omega\) é a frequência angular da fonte, dada por
+
+\begin{equation} 
+    \omega = 2 \pi f . 
+    \label{eq:omega} 
+\end{equation}
+
+Neste experimento, a frequência utilizada foi de \(\SI{60}{Hz}\), resultando em
+
+\begin{equation} 
+    \omega = 2 \pi \cdot 60 \approx \SI{376,99}{rad/s}. 
+    \label{eq:omega_valor} 
+\end{equation}
+
+A análise dos circuitos magnéticos também permite aplicar uma forma análoga à lei dos nós. Em um ponto de divisão de fluxo, o fluxo que entra em uma junção deve ser aproximadamente igual à soma dos fluxos que saem, desde que sejam desconsideradas perdas por dispersão. Assim, para o núcleo E+I, espera-se que o fluxo no ramo de alimentação se divida entre os demais ramos, respeitando aproximadamente a relação
+
+\begin{equation}
+    \Phi_{\text{entrada}} \approx \Phi_{\text{ramo 1}} + \Phi_{\text{ramo 2}} . \label{eq:lei_nos} 
+\end{equation}
+
+Essa aproximação é válida dentro das limitações experimentais, pois parte do fluxo pode se dispersar pelo ar, além de existirem imperfeições de montagem, folgas mecânicas, não linearidades do material e incertezas associadas às medições.
+
+\section{Objetivo} O objetivo deste relatório é verificar experimentalmente a influência da relutância no comportamento de circuitos magnéticos, por meio de ensaios realizados com núcleos ferromagnéticos nas configurações U+I e E+I. Busca-se calcular os fluxos magnéticos a partir das tensões induzidas em uma bobina de teste, comparar os resultados obtidos para diferentes configurações do núcleo, verificar a validade aproximada da lei dos nós magnética e comparar os resultados experimentais com uma simulação realizada no software FEMM.
+
+\section{Procedimentos} 
+\subsection{Materiais utilizados} 
+Foram utilizados os seguintes materiais e equipamentos: 
+\begin{itemize} 
+    \item Duas bobinas de \num{1000} espiras; 
+    \item Fonte de tensão alternada; 
+    \item Voltímetro CA; 
+    \item Amperímetro CA; 
+    \item Núcleo ferromagnético em formato U; 
+    \item Núcleo ferromagnético em formato I pequeno;
+    \item Núcleo ferromagnético em formato E; 
+    \item Núcleo ferromagnético em formato I grande; 
+    \item Software FEMM para simulação do circuito magnético. 
+\end{itemize}
+\subsection{Dimensões dos núcleos}
+
+\begin{table}[H] 
+    \centering 
+    \caption{Dimensões dos núcleos utilizados no experimento.} \label{tab:dimensoes_nucleos} 
+    \begin{tabular}{lccc} 
+        \toprule Núcleo & Altura (cm) & Largura (cm) & Profundidade (cm) \\ 
+        \midrule Núcleo pequeno & 17 & 15 & 4 \\ Núcleo grande & 25 & 25 & 4 \\ \bottomrule 
+    \end{tabular} 
+\end{table}
+
+A distância entre os núcleos foi medida como aproximadamente \(\SI{6,5}{cm}\). Para a modelagem no FEMM, foi adotada a profundidade de \(\SI{4}{cm}\), compatível com a medição experimental.
+
+\subsection{Ensaio com núcleo U+I aberto}
+
+Na primeira etapa, foi montado o circuito magnético utilizando o núcleo em formato U, a fonte de tensão alternada e duas bobinas. Uma das bobinas foi utilizada como bobina de alimentação e a outra como bobina de teste. A fonte foi ajustada para alimentar a bobina principal com tensão de \(\SI{15}{V}\) em corrente alternada. Em seguida, foram medidos a corrente na bobina de alimentação e a tensão induzida na bobina de teste.
+
+\subsection{Ensaio com núcleo U+I fechado}
+
+Na segunda etapa, foi adicionada a peça em formato I ao núcleo U, fechando o caminho magnético. A bobina de alimentação foi novamente alimentada com \(\SI{15}{V}\) em corrente alternada. Foram medidos a corrente na bobina de alimentação e a tensão induzida na bobina de teste. Esse procedimento permitiu comparar diretamente o comportamento do circuito magnético aberto e fechado.
+
+\subsection{Ensaio com núcleo E+I fechado}
+
+Na terceira etapa, foi utilizado o núcleo maior na configuração E+I. Inicialmente, a bobina de alimentação foi posicionada no ramo lateral esquerdo do núcleo, enquanto a bobina de teste foi colocada sucessivamente nas posições 1, 2 e 3. Para cada posição, foi medida a tensão induzida na bobina de teste.
+
+Posteriormente, a bobina de alimentação foi posicionada no ramo central do núcleo. O mesmo procedimento foi repetido, medindo-se a tensão induzida nas três posições da bobina de teste. Em todas as medições, a fonte foi ajustada para aproximadamente \(\SI{15}{V}\) em corrente alternada.
+
+\subsection{Simulação no FEMM}
+
+A simulação foi realizada no software FEMM, considerando um problema magnético planar com profundidade de \(\SI{4}{cm}\). O núcleo E+I foi modelado com as dimensões medidas em laboratório. O material magnético foi definido com curva B-H linear e permeabilidade relativa
+
+\begin{equation} 
+    \mu_r = 1000 . 
+    \label{eq:mur_femm} 
+\end{equation}
+
+A bobina de alimentação foi configurada com \num{1000} espiras e corrente de \(\SI{0,014}{A}\), valor correspondente à corrente medida experimentalmente no ensaio com núcleo fechado. Dessa forma, a força magnetomotriz considerada na simulação foi
+
+\begin{equation}    
+    \mathcal{F}_{\text{FEMM}} = 1000 \cdot 0,014 = \SI{14}{A.espiras}. \label{eq:fmm_femm} 
+\end{equation}
+
+A simulação foi utilizada para observar a distribuição da densidade de fluxo magnético no núcleo e comparar qualitativamente o comportamento obtido com os resultados experimentais.
+
+\section{Resultados e Discussão}
+
+\subsection{Cálculo dos fluxos magnéticos}
+
+Como as bobinas utilizadas possuem \num{1000} espiras e a frequência da fonte é de \(\SI{60}{Hz}\), o fluxo magnético eficaz foi calculado por meio de \eqref{eq:fluxo_farad}:
+
+\begin{equation} 
+    \Phi_{\text{rms}} = 
+    \frac{V_{\text{rms}}}{1000 \cdot 376,99}. 
+    \label{eq:fluxo_calculo} 
+\end{equation}
+
+Essa expressão foi utilizada para converter as tensões medidas na bobina de teste em valores aproximados de fluxo magnético.
+
+\subsection{Ensaio com núcleo U+I aberto e fechado}
+
+Os resultados medidos nos ensaios com núcleo U+I aberto e fechado são apresentados na Tabela \ref{tab:ui_resultados}.
+
+\begin{table}[H] 
+    \centering 
+    \caption{Resultados experimentais dos ensaios com núcleo U+I.} \label{tab:ui_resultados} 
+    \begin{tabular}{lccc} 
+        \toprule Condição do núcleo & \(V_{\text{entrada}}\) (V) & \(I_{\text{entrada}}\) (A) & \(V_{\text{teste}}\) (V) \\ 
+        \midrule 
+        U+I aberto & 15 & 0,120 & 4 \\ 
+        U+I fechado & 15 & 0,014 & 12 \\ 
+        \bottomrule 
+    \end{tabular} 
+\end{table}
+
+Para o núcleo aberto, o fluxo magnético calculado foi
+
+\begin{equation}
+    \Phi_{\text{aberto}} = 
+    \frac{4}{1000 \cdot 376,99} = 1,06 \times 10^{-5} \; \text{Wb}. 
+    \label{eq:fluxo_aberto} 
+\end{equation}
+
+Para o núcleo fechado, o fluxo magnético calculado foi
+
+\begin{equation} 
+    \Phi_{\text{fechado}} = 
+    \frac{12}{1000 \cdot 376,99} = 3,18 \times 10^{-5} \; 
+    \text{Wb}. 
+    \label{eq:fluxo_fechado} 
+\end{equation}
+
+A comparação entre os dois casos mostra que o fechamento do núcleo aumentou o fluxo magnético em aproximadamente três vezes, uma vez que a tensão induzida na bobina de teste passou de aproximadamente \(\SI{4}{V}\) para \(\SI{12}{V}\). Esse comportamento é coerente com a teoria de circuitos magnéticos, pois a inserção da peça I reduz a relutância do circuito ao fechar o caminho preferencial para o fluxo.
+
+Além do aumento do fluxo, observou-se uma redução expressiva da corrente de alimentação. No núcleo aberto, a corrente medida foi de \(\SI{0,120}{A}\), enquanto no núcleo fechado a corrente foi de apenas \(\SI{0,014}{A}\). Essa redução indica que, com menor relutância, o circuito magnético exige menor corrente de magnetização para estabelecer fluxo no núcleo.
+
+Uma estimativa da relutância equivalente pode ser obtida por
+
+\begin{equation} 
+    \mathcal{R} = \frac{N I}{\Phi}. 
+    \label{eq:relutancia_exp} 
+\end{equation}
+
+Para o núcleo aberto,
+
+\begin{equation} 
+    \mathcal{R}_{\text{aberto}} = 
+    \frac{1000 \cdot 0,120}{1,06 \times 10^{-5}} = 
+    1,13 \times 10^{7} 
+    \; \text{A.espiras/Wb}. 
+    \label{eq:relutancia_aberto} 
+\end{equation}
+
+Para o núcleo fechado, 
+
+\begin{equation} 
+    \mathcal{R}_{\text{fechado}} = 
+    \frac{1000 \cdot 0,014}{3,18 \times 10^{-5}} =
+    4,40 \times 10^{5} 
+    \; \text{A.espiras/Wb}. 
+    \label{eq:relutancia_fechado} 
+\end{equation}
+
+A relutância estimada no caso aberto foi muito maior que a relutância estimada no caso fechado. Esse resultado confirma que o entreferro e a abertura do caminho magnético aumentam significativamente a oposição à passagem do fluxo.
+
+\subsection{Ensaio E+I com alimentação no ramo lateral}
+
+No ensaio com o núcleo E+I, inicialmente a bobina de alimentação foi posicionada no ramo lateral esquerdo. As tensões medidas na bobina de teste e os fluxos calculados são apresentados na Tabela \ref{tab:ei_lateral}.
+
+\begin{table}[H] 
+    \centering 
+    \caption{Resultados experimentais do núcleo E+I com alimentação no ramo lateral.} \label{tab:ei_lateral} 
+    \begin{tabular}{ccc} 
+        \toprule Posição da bobina de teste & Tensão medida (V) & Fluxo calculado (Wb) \\ 
+        \midrule 
+        1 & 14 & \(3,71 \times 10^{-5}\) \\ 
+        2 & 9 & \(2,39 \times 10^{-5}\) \\ 
+        3 & 3 & \(7,96 \times 10^{-6}\) \\ 
+        \bottomrule 
+    \end{tabular} 
+\end{table}
+
+Os resultados mostram que o maior fluxo foi obtido na posição 1, mais próxima da bobina de alimentação. A posição 2 apresentou fluxo intermediário, enquanto a posição 3 apresentou o menor valor. Esse comportamento indica que o fluxo magnético se distribui pelo núcleo, mas sua intensidade diminui nos ramos mais afastados da excitação.
+
+Para verificar a lei dos nós magnética, considera-se que o fluxo principal no ramo de alimentação deve ser aproximadamente igual à soma dos fluxos nos demais ramos. Assim,
+
+\begin{equation} 
+    \Phi_1 \approx \Phi_2 + \Phi_3 . 
+    \label{eq:nos_lateral} 
+\end{equation}
+
+Substituindo os valores experimentais,
+
+\begin{equation} 
+    \Phi_2 + \Phi_3 = 
+    2,39 \times 10^{-5} 
+    + 
+    7,96 \times 10^{-6} 
+    = 
+    3,19 \times 10^{-5} 
+    \; \text{Wb}. 
+    \label{eq:soma_lateral} 
+\end{equation}
+
+Comparando com
+
+\begin{equation} 
+    \Phi_1 = 
+    3,71 \times 10^{-5} 
+    \; \text{Wb}, 
+    \label{eq:phi1_lateral} 
+\end{equation}
+
+obtém-se uma diferença relativa de
+
+\begin{equation} 
+    \varepsilon = 
+    \frac{3,71 \times 10^{-5} - 3,19 \times 10^{-5}} 
+    {3,71 \times 10^{-5}} 
+    \cdot 100 
+    = 
+    14,0\%. 
+    \label{eq:erro_lateral} 
+\end{equation}
+
+A diferença observada é compatível com as limitações do experimento. Parte do fluxo pode ter se dispersado pelo ar, além de existirem erros de posicionamento da bobina de teste, incertezas de leitura dos instrumentos e não idealidades do material magnético.
+
+\subsection{Ensaio E+I com alimentação no ramo central} Na segunda configuração do núcleo E+I, a bobina de alimentação foi posicionada no ramo central. Os resultados são apresentados na Tabela 
+\ref{tab:ei_central}.
+
+\begin{table}[H] 
+    \centering 
+    \caption{Resultados experimentais do núcleo E+I com alimentação no ramo central.} \label{tab:ei_central} 
+    \begin{tabular}{ccc} 
+        \toprule Posição da bobina de teste & Tensão medida (V) & Fluxo calculado (Wb) \\ 
+        \midrule 
+        1 & 6 & \(1,59 \times 10^{-5}\) \\ 
+        2 & 14 & \(3,71 \times 10^{-5}\) \\ 
+        3 & 6 & \(1,59 \times 10^{-5}\) \\ 
+        \bottomrule 
+    \end{tabular} 
+\end{table}
+
+Neste caso, observa-se que os fluxos nos ramos laterais foram aproximadamente iguais. Esse resultado é coerente com a geometria do núcleo, pois, com a bobina de alimentação posicionada no ramo central, o circuito magnético apresenta simetria aproximada entre os caminhos laterais.
+
+A verificação da lei dos nós pode ser feita por
+
+\begin{equation} 
+    \Phi_2 \approx \Phi_1 + \Phi_3 . 
+    \label{eq:nos_central} 
+\end{equation}
+
+Substituindo os valores medidos,
+
+
+\begin{equation} 
+    \Phi_1 + \Phi_3 = 
+    1,59 \times 10^{-5}
+    + 
+    1,59 \times 10^{-5} 
+    = 
+    3,18 \times 10^{-5} 
+    \; \text{Wb}.
+    \label{eq:soma_central} 
+\end{equation}
+
+Comparando com
+
+\begin{equation} 
+    \Phi_2 = 
+    3,71 \times 10^{-5}
+    \; \text{Wb}, 
+    \label{eq:phi2_central} 
+\end{equation}
+
+obtém-se
+
+\begin{equation} 
+    \varepsilon = 
+    \frac{3,71 \times 10^{-5} - 3,18 \times 10^{-5}} 
+    {3,71 \times 10^{-5}} 
+    \cdot 100 
+    =
+    14,3\%. 
+    \label{eq:erro_central} 
+\end{equation}
+
+A diferença percentual foi semelhante à observada no caso com alimentação no ramo lateral. Isso sugere que as principais fontes de erro estão associadas a limitações gerais da montagem experimental, como dispersão de fluxo, folgas entre as peças do núcleo, incertezas de medição e simplificações no modelo teórico.
+
+\subsection{Resultados da simulação FEMM}
+
+A simulação no FEMM foi realizada com o núcleo E+I, utilizando material magnético linear com permeabilidade relativa \(\mu_r = 1000\), conforme indicado na metodologia da videoaula utilizada como apoio. A corrente configurada na bobina foi de \(\SI{0,014}{A}\), compatível com a corrente medida no ensaio experimental com núcleo fechado. A Figura \ref{fig:femm_mapa_fluxo} apresenta o mapa de densidade de fluxo magnético obtido na simulação.
+
+\figuraopcional 
+    {femm_mapa_fluxo.jpeg} 
+    {0.95} 
+    {Distribuição da densidade de fluxo magnético no núcleo E+I obtida no FEMM.} {fig:femm_mapa_fluxo}
+
+A Figura \ref{fig:femm_circuit_properties} apresenta a configuração do circuito na simulação, indicando a corrente total de \(\SI{0,014}{A}\).
+
+\figuraopcional 
+    {femm_circuit_properties.jpeg} 
+    {0.75} 
+    {Propriedades do circuito configurado no FEMM.} 
+    {fig:femm_circuit_properties}
+
+A Figura \ref{fig:femm_material} apresenta a configuração do material magnético utilizado na simulação.
+
+\figuraopcional 
+    {femm_material.jpeg}
+    {0.75} 
+    {Material magnético linear utilizado no FEMM com \(\mu_r = 1000\).} 
+    {fig:femm_material}
+
+A análise visual do mapa de densidade de fluxo mostra que o maior valor ocorre no ramo onde a bobina de alimentação está posicionada. Nos demais ramos, a densidade de fluxo diminui gradativamente. Esse comportamento está de acordo com os resultados experimentais obtidos para a alimentação no ramo lateral, em que as tensões medidas foram \(\SI{14}{V}\), \(\SI{9}{V}\) e \(\SI{3}{V}\), respectivamente.
+
+Além da análise qualitativa, foram coletados valores pontuais da densidade de fluxo magnético nos três ramos do núcleo. Os valores observados são apresentados na Tabela \ref{tab:femm_b}.
+
+\begin{table}[H] 
+    \centering 
+    \caption{Valores pontuais de densidade de fluxo magnético obtidos no FEMM.} \label{tab:femm_b} 
+    \begin{tabular}{lc} 
+        \toprule 
+        Ramo analisado & \(|B|\) (T) \\ 
+        \midrule 
+        Ramo lateral esquerdo & \(2,31443 \times 10^{-4}\) \\ 
+        Ramo central & \(1,35510 \times 10^{-4}\) \\ 
+        Ramo lateral direito & \(2,22954 \times 10^{-5}\) \\ 
+        \bottomrule 
+    \end{tabular} 
+\end{table}
+
+Normalizando os valores pelo maior valor de densidade de fluxo, obtém-se a Tabela \ref{tab:comparacao_normalizada}.
+
+\begin{table}[H] 
+    \centering 
+    \caption{Comparação normalizada entre resultados experimentais e FEMM.} \label{tab:comparacao_normalizada} 
+    \begin{tabular}{lcc} 
+        \toprule 
+        Ramo & Resultado experimental normalizado & FEMM normalizado \\ 
+        \midrule
+        Ramo lateral esquerdo & 1,00 & 1,00 \\
+        Ramo central & 0,64 & 0,59 \\ 
+        Ramo lateral direito & 0,21 & 0,10 \\ 
+        \bottomrule
+    \end{tabular} 
+\end{table}
+
+A comparação normalizada mostra que o FEMM reproduziu corretamente a tendência observada experimentalmente. Em ambos os casos, o maior fluxo ocorre no ramo lateral esquerdo, seguido pelo ramo central e, por fim, pelo ramo lateral direito. A diferença entre os valores experimentais e simulados pode ser atribuída às simplificações adotadas na simulação, especialmente ao uso de material linear, à aproximação geométrica do núcleo, à ausência de modelagem detalhada dos entreferros e ao fato de os valores de \(B\) terem sido extraídos pontualmente, e não por integração da densidade de fluxo ao longo de toda a seção transversal de cada ramo.
+
+\subsection{Limitações da comparação}
+
+A comparação entre os resultados experimentais e simulados apresenta algumas limitações importantes. Primeiramente, o material magnético real pode apresentar comportamento não linear, histerese e saturação, enquanto a simulação considerou uma curva B-H linear com \(\mu_r = 1000\). Além disso, o contato entre as peças do núcleo não é ideal. Pequenos entreferros podem surgir devido a folgas mecânicas, rugosidade das superfícies e desalinhamentos na montagem.
+
+Outra limitação relevante é que a bobina de teste foi utilizada para medir indiretamente o fluxo magnético por meio da tensão induzida. Essa medição depende do correto posicionamento da bobina, da leitura do voltímetro e da hipótese de operação senoidal. No FEMM, por outro lado, os valores de densidade de fluxo foram extraídos em pontos específicos do núcleo, o que não representa necessariamente o valor médio em toda a seção transversal.
+
+Apesar dessas limitações, os resultados obtidos foram coerentes. O experimento mostrou que o fechamento do núcleo reduz a relutância do circuito magnético, aumentando o fluxo e reduzindo a corrente de magnetização. No núcleo E+I, observou-se a divisão do fluxo entre os ramos, com comportamento aproximadamente compatível com a lei dos nós magnética. A simulação FEMM confirmou qualitativamente essa distribuição.
+
+% CONCLUSÃO%
+
+\section{Conclusões}
+
+O experimento permitiu verificar a influência da relutância no comportamento de circuitos magnéticos. No ensaio com núcleo U+I, observou-se que o fechamento do caminho magnético aumentou a tensão induzida na bobina de teste de aproximadamente \(\SI{4}{V}\) para \(\SI{12}{V}\). Como a tensão induzida é proporcional ao fluxo magnético, conclui-se que o fluxo no núcleo fechado foi cerca de três vezes maior que no núcleo aberto.
+
+Também foi observada uma redução significativa da corrente de alimentação, que passou de \(\SI{0,120}{A}\) no núcleo aberto para \(\SI{0,014}{A}\) no núcleo fechado. Esse resultado evidencia que a redução da relutância permite produzir maior fluxo com menor corrente de magnetização.
+
+No ensaio com núcleo E+I, verificou-se que o fluxo magnético se distribui entre os ramos do núcleo. Quando a bobina de alimentação foi posicionada no ramo lateral, o maior fluxo ocorreu no ramo mais próximo da excitação. Quando a bobina foi posicionada no ramo central, os fluxos nos ramos laterais apresentaram valores aproximadamente iguais, indicando uma divisão simétrica do fluxo.
+
+A lei dos nós magnética foi verificada de forma aproximada. Em ambos os casos analisados, a diferença entre o fluxo principal e a soma dos fluxos nos demais ramos foi próxima de 14\%. Essa diferença é aceitável considerando as limitações experimentais, como dispersão de fluxo, entreferros não intencionais, incertezas de medição e não idealidades do material.
+
+A simulação realizada no FEMM apresentou distribuição de fluxo coerente com os resultados experimentais. O mapa de densidade de fluxo mostrou maior concentração no ramo onde estava localizada a bobina de alimentação e redução gradual nos demais ramos. Embora a simulação tenha utilizado um modelo simplificado, com material linear e permeabilidade relativa constante, ela foi útil para visualizar o comportamento do circuito magnético e reforçar a interpretação dos resultados experimentais.
+
+
+\begin{thebibliography}{99} 
+    \bibitem{chapman2013} 
+    CHAPMAN, Stephen J. 
+    \textit{Fundamentos de Máquinas Elétricas}. 
+    5. ed. 
+    Porto Alegre: AMGH Editora, 2013. 
+    
+    \bibitem{umans2014} 
+    UMANS, Stephen D. 
+    \textit{Máquinas Elétricas de Fitzgerald e Kingsley}. 
+    7. ed. 
+    Porto Alegre: AMGH Editora, 2014.
+    \bibitem{femm} MEEKER, David. 
+    \textit{Finite Element Method Magnetics: FEMM}. 
+    Software de análise por elementos finitos aplicado a problemas magnéticos. 
+    
+\end{thebibliography} 
+    
+\end{document}
